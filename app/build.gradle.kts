@@ -58,6 +58,14 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation ("androidx.compose.foundation:foundation:1.5.1")
+    implementation ("androidx.compose.material3:material3:1.2.1")
+    implementation ("androidx.compose.ui:ui:1.5.1")
+
+
+
+
+
     val nav_version = "2.7.7"
     implementation("androidx.navigation:navigation-compose:$nav_version")
 }
