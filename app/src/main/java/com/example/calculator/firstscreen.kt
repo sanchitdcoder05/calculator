@@ -2,13 +2,14 @@ package com.example.calculator
 
 import android.media.MediaPlayer
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,13 +30,19 @@ fun firstscreen(navHostController: NavHostController, viewModel: SettingsViewMod
     val mediaPlayer = remember { MediaPlayer.create(navHostController.context, R.raw.button_click) }
 
     fun allot(input: String) {
-        if (!flag1) {
+        if (opr=="") {
             if (input == "." && num1.contains(".")) return
             num1 += input
-        } else if (flag1 && !flag2) { // Allow entering num2 after operator
+
+        }
+        else{
             if (input == "." && num2.contains(".")) return
             num2 += input
         }
+//        else if (flag1 && !flag2) {
+//            if (input == "." && num2.contains(".")) return
+//            num2 += input
+//        }
 
         if (soundEnabled) {
             mediaPlayer.start()
@@ -45,26 +52,59 @@ fun firstscreen(navHostController: NavHostController, viewModel: SettingsViewMod
     fun Clear() {
         num1 = ""
         num2 = ""
+        opr = ""
         result = ""
     }
 
-    fun execute() {
-        val num1Double = num1.toDoubleOrNull() ?: 0.0
-        val num2Double = num2.toDoubleOrNull() ?: 0.0
-        result = when (opr) {
-            "/" -> (num1Double / num2Double).toString()
-            "*" -> (num1Double * num2Double).toString()
-            "-" -> (num1Double - num2Double).toString()
-            "+" -> (num1Double + num2Double).toString()
-            else -> result
-        }
-        flag2 = true
-        flag1 = true
 
+    fun execute(){
+        if (opr=="/"){
+            var num1Double=num1.toDoubleOrNull() ?: 0.0
+            var num2Double=num2.toDoubleOrNull() ?: 0.0
+            result = (num1Double/num2Double).toString()
+            flag2 = true
+            flag1 = true
+
+        }
+        else if (opr=="*"){
+            var num1Double=num1.toDoubleOrNull() ?: 0.0
+            var num2Double=num2.toDoubleOrNull() ?: 0.0
+            result = (num1Double*num2Double).toString()
+            flag2 = true
+            flag1 = true
+        }
+        else if (opr=="-"){
+            var num1Double=num1.toDoubleOrNull() ?: 0.0
+            var num2Double=num2.toDoubleOrNull() ?: 0.0
+            result = (num1Double-num2Double).toString()
+            flag2 = true
+            flag1 = true
+        }
+        else if (opr=="+"){
+            var num1Double=num1.toDoubleOrNull() ?: 0.0
+            var num2Double=num2.toDoubleOrNull() ?: 0.0
+            result = (num1Double+num2Double).toString()
+            flag2 = true
+            flag1 = true
+        }
         if (soundEnabled) {
             mediaPlayer.start()
         }
     }
+
+    fun c1() {
+        if (num2 != "") {
+            num2 = num2.dropLast(1)
+        } else if (opr == "") {
+            if (num1.isNotEmpty()) {
+                num1 = num1.dropLast(1)
+            }
+        } else if (num2 == "") {
+            opr = ""
+        }
+    }
+
+
 
     Scaffold(
         topBar = {
@@ -72,7 +112,7 @@ fun firstscreen(navHostController: NavHostController, viewModel: SettingsViewMod
                 title = { Text("CALCULATOR", fontSize = 18.sp) },
                 actions = {
                     IconButton(onClick = { navHostController.navigate("secondscreen") }) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home")
+                        Icon(painter = painterResource(id = R.drawable.baseline_currency_exchange_24), modifier = Modifier.size(20.dp), contentDescription = "Currency")
                     }
                     IconButton(onClick = { navHostController.navigate("thirdscreen") }) {
                         Icon(Icons.Filled.Settings, contentDescription = "Settings")
@@ -87,172 +127,116 @@ fun firstscreen(navHostController: NavHostController, viewModel: SettingsViewMod
                 verticalArrangement = Arrangement.Bottom,
                 modifier = Modifier
                     .fillMaxSize()
-                    .fillMaxWidth()
                     .padding(15.dp)
                     .padding(paddingValues)
             ) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    Text(num1, fontSize = 27.sp)
+                    Text(num1, fontSize = 40.sp)
                     Spacer(modifier = Modifier.width(15.dp))
-                    Text(opr, fontSize = 24.sp)
+                    Text(opr, fontSize = 35.sp)
                     Spacer(modifier = Modifier.width(15.dp))
-                    Text(num2, fontSize = 27.sp)
+                    Text(num2, fontSize = 40.sp)
                 }
                 Spacer(modifier = Modifier.height(15.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    Text(result, fontSize = 40.sp)
+                    Text(result, fontSize = 50.sp)
                 }
 
-                HorizontalDivider(thickness = 2.dp)
+                Divider(thickness = 2.dp)
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Button(
-                        onClick = {
-                            flag1 = false
-                            flag2 = false
-                            opr = ""
-                            Clear()
-
-                            if (soundEnabled) {
-                                mediaPlayer.start()
-                            }
-                        }, modifier = Modifier
-                            .weight(1f)
-                            .padding(4.dp)
-                    ) {
+                    Button(onClick = { Clear() ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("AC")
                     }
-                    Button(
-                        onClick = {
-                            execute()
-                        }, modifier = Modifier
-                            .weight(1f)
-                            .padding(4.dp)
-                    ) {
+                    Button(onClick = { c1(); execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("C")
-                    }
-                    Button(
-                        onClick = {
-                            opr = ""
-                            execute()
 
-                            if (soundEnabled) {
-                                mediaPlayer.start()
-                            }
-                        }, modifier = Modifier
-                            .weight(1f)
-                            .padding(4.dp)
-                    ) {
-                        Text(" ")
                     }
-                    Button(
-                        onClick = {
-                            opr = "/"
-                            flag1 = true
-                            flag2 = false
-
-                            if (soundEnabled) {
-                                mediaPlayer.start()
-                            }
-                        }, modifier = Modifier
-                            .weight(1f)
-                            .padding(4.dp)
-                    ) {
-                        Text("/")
+                    Button(onClick = { opr = ""; execute() },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
+                        Text("+/-")
+                    }
+                    Button(onClick = { opr = "/"; flag1 = true; flag2 = false; execute() },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
+                        Text("÷")
                     }
                 }
-
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Button(onClick = { allot("7") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("7") ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("7")
                     }
-                    Button(onClick = { allot("8") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("8") ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("8")
                     }
-                    Button(onClick = { allot("9") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("9") ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("9")
                     }
-                    Button(
-                        onClick = {
-                            opr = "*"
-                            flag1 = true
-                            flag2 = false
-                        },
-                        modifier = Modifier.weight(1f).padding(4.dp)
-                    ) {
-                        Text("*")
+                    Button(onClick = { opr = "*" ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
+                        Text("×")
                     }
                 }
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Button(onClick = { allot("4") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("4") ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("4")
                     }
-                    Button(onClick = { allot("5") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("5"); execute() },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("5")
                     }
-                    Button(onClick = { allot("6") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("6") ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("6")
                     }
-                    Button(
-                        onClick = {
-                            opr = "-"
-                            flag1 = true
-                            flag2 = false
-                        },
-                        modifier = Modifier.weight(1f).padding(4.dp)
-                    ) {
+                    Button(onClick = { opr = "-" ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("-")
                     }
                 }
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Button(onClick = { allot("1") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("1"); execute() },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("1")
                     }
-                    Button(onClick = { allot("2") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("2"); execute() },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("2")
                     }
-                    Button(onClick = { allot("3") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("3"); execute() },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("3")
                     }
-                    Button(
-                        onClick = {
-                            opr = "+"
-                            flag1 = true
-                            flag2 = false
-
-                            if (soundEnabled) {
-                                mediaPlayer.start()
-                            }
-                        },
-                        modifier = Modifier.weight(1f).padding(4.dp)
-                    ) {
+                    Button(onClick = { opr = "+" ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("+")
                     }
                 }
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Button(onClick = {
-                        execute()
-                        if (soundEnabled) {
-                        mediaPlayer.start()
-                    }}, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { execute(); execute() },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("%")
                     }
-                    Button(onClick = { allot("0") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot("0"); execute() },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("0")
                     }
-                    Button(onClick = { allot(".") }, modifier = Modifier.weight(1f).padding(4.dp)) {
+                    Button(onClick = { allot(".") ; execute()},
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text(".")
                     }
-                    Button(
-                        onClick = {
-                            execute()
-                            num1 = result
-                            num2 = ""
-                            opr = ""
-                            result = ""
-                        }, modifier = Modifier.weight(1f).padding(4.dp)
-                    ) {
+                    Button(onClick = {
+                        execute();
+                        num1 = result;
+                        num2 = ""; opr = ""; result = ""
+                                     },
+                        modifier = Modifier.weight(1f).padding(4.dp).size(60.dp), shape = CircleShape) {
                         Text("=")
                     }
                 }
