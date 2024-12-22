@@ -7,21 +7,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-
-//import androidx.compose.foundation.layout.FlowRowScopeInstance.align
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.calculator.ui.theme.CalculatorTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
-
+import com.example.calculator.ui.theme.CalculatorTheme
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -35,25 +32,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MyApp(){
+fun MyApp() {
+    val settingsViewModel: SettingsViewModel = viewModel()
 
-
-    val navController= rememberNavController()
-    NavHost(navController=navController, startDestination = "firstscreen", builder = {
-        composable("firstscreen")
-        {
-            firstscreen(navController)
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "firstscreen", builder = {
+        composable("firstscreen") {
+            firstscreen(navController, settingsViewModel)
         }
-        composable("secondscreen")
-        {
-            secondscreen(navController)
+        composable("secondScreen") {
+            SecondScreen(navController)
         }
-        composable("thirdscreen")
-        {
-            thirdscreen(navController)
+        composable("thirdscreen") {
+            thirdscreen(navController, settingsViewModel)
         }
     })
 }

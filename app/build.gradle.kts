@@ -61,6 +61,7 @@ dependencies {
     implementation ("androidx.compose.foundation:foundation:1.5.1")
     implementation ("androidx.compose.material3:material3:1.2.1")
     implementation ("androidx.compose.ui:ui:1.5.1")
+    implementation("androidx.media:media:1.6.0")
 
 
 

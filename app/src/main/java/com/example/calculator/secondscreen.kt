@@ -1,264 +1,223 @@
 package com.example.calculator
 
-
-import android.annotation.SuppressLint
-import android.view.WindowInsets
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import kotlin.math.roundToInt
-import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.*
-import androidx.compose.foundation.layout.statusBars
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-
-
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BottomNavigationBar(navHostController: NavHostController) {
-    var selectedItem by remember { mutableStateOf("Unit") }
-
-    NavigationBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(Color(0xFFBBDEFB)), // Background color (light blue)
-        containerColor = Color(0xFFBBDEFB) // Matches the background color
-    ) {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.unit), // This is the VectorDrawable (unit.xml)
-                    contentDescription = "Unit"
-                )
-            },
-            label = { Text("Unit") },
-            selected = selectedItem == "Unit",
-            onClick = {
-                selectedItem = "Unit"
-                navHostController.navigate("home") // Replace with actual route
-            },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color.Black, // Icon color for selected item (black)
-                selectedTextColor = Color.Black, // Text color for selected item (black)
-                unselectedIconColor = Color.White, // Icon color for unselected items (white)
-                unselectedTextColor = Color.White, // Text color for unselected items (white)
-                indicatorColor = Color(0xFF87CEEB) // Highlight color for selected item (lighter blue)
-            )
-        )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.unit), // This is the VectorDrawable (unit.xml)
-                    contentDescription = "Unit"
-                )
-            },
-            label = { Text("Weight") },
-            selected = selectedItem == "Weight",
-            onClick = {
-                selectedItem = "Weight"
-                navHostController.navigate("utility") // Replace with actual route
-            },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color.Black,
-                selectedTextColor = Color.Black,
-                unselectedIconColor = Color.White,
-                unselectedTextColor = Color.White,
-                indicatorColor = Color(0xFF87CEEB)
-            )
-        )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.unit), // This is the VectorDrawable (unit.xml)
-                    contentDescription = "Unit"
-                )
-            },
-            label = { Text("Settings") },
-            selected = selectedItem == "Settings",
-            onClick = {
-                selectedItem = "Settings"
-                navHostController.navigate("settings") // Replace with actual route
-            },
-            colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color.Black,
-                selectedTextColor = Color.Black,
-                unselectedIconColor = Color.White,
-                unselectedTextColor = Color.White,
-                indicatorColor = Color(0xFF87CEEB)
-            )
-        )
-    }
-}
-
-
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-fun secondscreen(navHostController: NavHostController) {
+fun SecondScreen(navHostController: NavHostController) {
     var inputValue by remember { mutableStateOf("") }
     var outputValue by remember { mutableStateOf("") }
-    var inputUnit by remember { mutableStateOf("Meters") }
-    var outputUnit by remember { mutableStateOf("Meters") }
+    var inputCurrency by remember { mutableStateOf("INR") }
+    var outputCurrency by remember { mutableStateOf("INR") }
     var iExpanded by remember { mutableStateOf(false) }
     var oExpanded by remember { mutableStateOf(false) }
     var conversionFactor = remember { mutableStateOf(1.00) }
-    var oConversionFactor = remember { mutableStateOf(1.00) }
 
-    fun convertUnits() {
+    fun convertCurrency() {
+        if (inputCurrency == "INR") {
+            when (outputCurrency) {
+                "USD" -> conversionFactor.value = 0.0119
+                "Pounds" -> conversionFactor.value = 0.0092
+                "Euros" -> conversionFactor.value = 0.011
+                else -> conversionFactor.value = 1.0
+            }
+        }
+        if (inputCurrency == "USD") {
+            when (outputCurrency) {
+                "INR" -> conversionFactor.value = 84.1003
+                "Pounds" -> conversionFactor.value = 0.7714
+                "Euros" -> conversionFactor.value = 0.9261
+                else -> conversionFactor.value = 1.0
+            }
+        }
+        if (inputCurrency == "Pounds") {
+            when (outputCurrency) {
+                "INR" -> conversionFactor.value = 109.0211
+                "USD" -> conversionFactor.value = 1.2963
+                "Euros" -> conversionFactor.value = 1.2006
+                else -> conversionFactor.value = 1.0
+            }
+        }
+        if (inputCurrency == "Euros") {
+            when (outputCurrency) {
+                "INR" -> conversionFactor.value = 90.8064
+                "USD" -> conversionFactor.value = 1.0797
+                "Pounds" -> conversionFactor.value = 0.8329
+                else -> conversionFactor.value = 1.0
+            }
+        }
+
         val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0
-        val result = (inputValueDouble * conversionFactor.value * 100 / oConversionFactor.value).roundToInt() / 100.0
-        outputValue = result.toString()
+        outputValue = (inputValueDouble * conversionFactor.value).toString()
     }
 
-    Scaffold(
-        bottomBar = { BottomNavigationBar(navHostController) }
-    ) { innerPadding ->
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                onClick = { navHostController.navigate("firstscreen") },
-                modifier = Modifier
-                    .padding(top = 12.dp, start = 16.dp) // Add enough top padding to clear the notification bar
-                    .align(Alignment.TopStart)
+            Text("Currency Converter", fontSize = 24.sp)
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Back >")
-            }
+                Box {
+                    Button(onClick = { iExpanded = true }) {
+                        Text(text = inputCurrency)
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
+                    }
+                    DropdownMenu(expanded = iExpanded, onDismissRequest = { iExpanded = false }) {
+                        DropdownMenuItem(
+                            text = { Text("INR") },
+                            onClick = {
+                                iExpanded = false
+                                inputCurrency = "INR"
+                                convertCurrency()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("USD") },
+                            onClick = {
+                                iExpanded = false
+                                inputCurrency = "USD"
+                                convertCurrency()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Pounds") },
+                            onClick = {
+                                iExpanded = false
+                                inputCurrency = "Pounds"
+                                convertCurrency()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Euros") },
+                            onClick = {
+                                iExpanded = false
+                                inputCurrency = "Euros"
+                                convertCurrency()
+                            }
+                        )
+                    }
+                }
 
+                Spacer(modifier = Modifier.width(12.dp))
 
-
-            // Centered Content
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Title
-                Text("Unit Converter", style = MaterialTheme.typography.headlineLarge)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Input Value Field
                 OutlinedTextField(
                     value = inputValue,
                     onValueChange = {
                         inputValue = it
-                        convertUnits()
+                        convertCurrency()
                     },
-                    label = { Text("Enter Value") }
+                    label = { Text("Enter Amount") }
                 )
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(30.dp))
+            Text("To")
+            Spacer(modifier = Modifier.height(30.dp))
 
-                // Unit Selection
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Input Unit Dropdown
-                    UnitDropdown(
-                        selectedUnit = inputUnit,
-                        onUnitSelected = { selectedUnit ->
-                            inputUnit = selectedUnit
-                            conversionFactor.value = when (selectedUnit) {
-                                "Meters" -> 1.0
-                                "Centimeters" -> 0.01
-                                "Feet" -> 0.3048
-                                "Millimeters" -> 0.001
-                                else -> 1.0
+            // Output Currency Selection
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box {
+                    Button(onClick = { oExpanded = true }) {
+                        Text(text = outputCurrency)
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
+                    }
+                    DropdownMenu(expanded = oExpanded, onDismissRequest = { oExpanded = false }) {
+                        DropdownMenuItem(
+                            text = { Text("INR") },
+                            onClick = {
+                                oExpanded = false
+                                outputCurrency = "INR"
+                                convertCurrency()
                             }
-                            convertUnits()
-                        },
-                        expanded = iExpanded,
-                        onExpandedChange = { iExpanded = it }
-                    )
-
-                    // Output Unit Dropdown
-                    UnitDropdown(
-                        selectedUnit = outputUnit,
-                        onUnitSelected = { selectedUnit ->
-                            outputUnit = selectedUnit
-                            oConversionFactor.value = when (selectedUnit) {
-                                "Meters" -> 1.0
-                                "Centimeters" -> 0.01
-                                "Feet" -> 0.3048
-                                "Millimeters" -> 0.001
-                                else -> 1.0
+                        )
+                        DropdownMenuItem(
+                            text = { Text("USD") },
+                            onClick = {
+                                oExpanded = false
+                                outputCurrency = "USD"
+                                convertCurrency()
                             }
-                            convertUnits()
-                        },
-                        expanded = oExpanded,
-                        onExpandedChange = { oExpanded = it }
-                    )
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Pounds") },
+                            onClick = {
+                                oExpanded = false
+                                outputCurrency = "Pounds"
+                                convertCurrency()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Euros") },
+                            onClick = {
+                                oExpanded = false
+                                outputCurrency = "Euros"
+                                convertCurrency()
+                            }
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Result Display
-                Text("Result = $outputValue $outputUnit", style = MaterialTheme.typography.headlineSmall)
-            }
-        }
-    }
-}
-
-@Composable
-fun UnitDropdown(
-    selectedUnit: String,
-    onUnitSelected: (String) -> Unit,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit
-) {
-    Box {
-        Button(onClick = { onExpandedChange(true) }) {
-            Text(text = selectedUnit)
-            Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
-        }
-
-        DropdownMenu(expanded = expanded, onDismissRequest = { onExpandedChange(false) }) {
-            listOf("Meters", "Centimeters", "Feet", "Millimeters").forEach { unit ->
-                DropdownMenuItem(
-                    text = { Text(unit) },
-                    onClick = {
-                        onUnitSelected(unit)
-                        onExpandedChange(false)
-                    }
+                Spacer(modifier = Modifier.width(12.dp))
+                OutlinedTextField(
+                    value = outputValue,
+                    onValueChange = {
+                        inputValue = it
+                        convertCurrency()
+                    },
+                    label = { Text("Converted Amount") },
+                    readOnly = true
                 )
             }
+        }
+
+        IconButton(
+            onClick = { navHostController.popBackStack() },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .statusBarsPadding()
+        ) {
+            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+        }
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val current = LocalDateTime.now().format(formatter)
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Text("Last Updated on $current IST")
+            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }
