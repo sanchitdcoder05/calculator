@@ -112,7 +112,8 @@ fun firstscreen(navHostController: NavHostController, viewModel: SettingsViewMod
                 title = { Text("CALCULATOR", fontSize = 18.sp) },
                 actions = {
                     IconButton(onClick = { navHostController.navigate("secondscreen") }) {
-                        Icon(painter = painterResource(id = R.drawable.baseline_currency_exchange_24), modifier = Modifier.size(20.dp), contentDescription = "Currency")
+                        Icon(painter = painterResource(id = R.drawable.baseline_currency_exchange_24),
+                            modifier = Modifier.size(20.dp), contentDescription = "Currency")
                     }
                     IconButton(onClick = { navHostController.navigate("thirdscreen") }) {
                         Icon(Icons.Filled.Settings, contentDescription = "Settings")

@@ -3,7 +3,6 @@ package com.example.calculator
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -17,6 +16,7 @@ import androidx.navigation.NavHostController
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SecondScreen(navHostController: NavHostController) {
@@ -66,158 +66,162 @@ fun SecondScreen(navHostController: NavHostController) {
         outputValue = (inputValueDouble * conversionFactor.value).toString()
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Currency Converter", fontSize = 24.sp)
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box {
-                    Button(onClick = { iExpanded = true }) {
-                        Text(text = inputCurrency)
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
-                    }
-                    DropdownMenu(expanded = iExpanded, onDismissRequest = { iExpanded = false }) {
-                        DropdownMenuItem(
-                            text = { Text("INR") },
-                            onClick = {
-                                iExpanded = false
-                                inputCurrency = "INR"
-                                convertCurrency()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("USD") },
-                            onClick = {
-                                iExpanded = false
-                                inputCurrency = "USD"
-                                convertCurrency()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Pounds") },
-                            onClick = {
-                                iExpanded = false
-                                inputCurrency = "Pounds"
-                                convertCurrency()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Euros") },
-                            onClick = {
-                                iExpanded = false
-                                inputCurrency = "Euros"
-                                convertCurrency()
-                            }
-                        )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Currency Converter") },
+                navigationIcon = {
+                    IconButton(onClick = { navHostController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                OutlinedTextField(
-                    value = inputValue,
-                    onValueChange = {
-                        inputValue = it
-                        convertCurrency()
-                    },
-                    label = { Text("Enter Amount") }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(30.dp))
-            Text("To")
-            Spacer(modifier = Modifier.height(30.dp))
-
-            // Output Currency Selection
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box {
-                    Button(onClick = { oExpanded = true }) {
-                        Text(text = outputCurrency)
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box {
+                        Button(onClick = { iExpanded = true }) {
+                            Text(text = inputCurrency)
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
+                        }
+                        DropdownMenu(expanded = iExpanded, onDismissRequest = { iExpanded = false }) {
+                            DropdownMenuItem(
+                                text = { Text("INR") },
+                                onClick = {
+                                    iExpanded = false
+                                    inputCurrency = "INR"
+                                    convertCurrency()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("USD") },
+                                onClick = {
+                                    iExpanded = false
+                                    inputCurrency = "USD"
+                                    convertCurrency()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Pounds") },
+                                onClick = {
+                                    iExpanded = false
+                                    inputCurrency = "Pounds"
+                                    convertCurrency()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Euros") },
+                                onClick = {
+                                    iExpanded = false
+                                    inputCurrency = "Euros"
+                                    convertCurrency()
+                                }
+                            )
+                        }
                     }
-                    DropdownMenu(expanded = oExpanded, onDismissRequest = { oExpanded = false }) {
-                        DropdownMenuItem(
-                            text = { Text("INR") },
-                            onClick = {
-                                oExpanded = false
-                                outputCurrency = "INR"
-                                convertCurrency()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("USD") },
-                            onClick = {
-                                oExpanded = false
-                                outputCurrency = "USD"
-                                convertCurrency()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Pounds") },
-                            onClick = {
-                                oExpanded = false
-                                outputCurrency = "Pounds"
-                                convertCurrency()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Euros") },
-                            onClick = {
-                                oExpanded = false
-                                outputCurrency = "Euros"
-                                convertCurrency()
-                            }
-                        )
-                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    OutlinedTextField(
+                        value = inputValue,
+                        onValueChange = {
+                            inputValue = it
+                            convertCurrency()
+                        },
+                        label = { Text("Enter Amount") }
+                    )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
-                OutlinedTextField(
-                    value = outputValue,
-                    onValueChange = {
-                        inputValue = it
-                        convertCurrency()
-                    },
-                    label = { Text("Converted Amount") },
-                    readOnly = true
-                )
+                Spacer(modifier = Modifier.height(30.dp))
+                Text("To")
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box {
+                        Button(onClick = { oExpanded = true }) {
+                            Text(text = outputCurrency)
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Down")
+                        }
+                        DropdownMenu(expanded = oExpanded, onDismissRequest = { oExpanded = false }) {
+                            DropdownMenuItem(
+                                text = { Text("INR") },
+                                onClick = {
+                                    oExpanded = false
+                                    outputCurrency = "INR"
+                                    convertCurrency()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("USD") },
+                                onClick = {
+                                    oExpanded = false
+                                    outputCurrency = "USD"
+                                    convertCurrency()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Pounds") },
+                                onClick = {
+                                    oExpanded = false
+                                    outputCurrency = "Pounds"
+                                    convertCurrency()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Euros") },
+                                onClick = {
+                                    oExpanded = false
+                                    outputCurrency = "Euros"
+                                    convertCurrency()
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+                    OutlinedTextField(
+                        value = outputValue,
+                        onValueChange = {
+                            inputValue = it
+                            convertCurrency()
+                        },
+                        label = { Text("Converted Amount") },
+                        readOnly = true
+                    )
+                }
             }
-        }
 
-        IconButton(
-            onClick = { navHostController.popBackStack() },
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .statusBarsPadding()
-        ) {
-            Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-        }
-
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        val current = LocalDateTime.now().format(formatter)
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Text("Last Updated on $current IST")
-            Spacer(modifier = Modifier.height(12.dp))
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+            val current = LocalDateTime.now().format(formatter)
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Text("Last Updated on $current IST")
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
     }
 }
